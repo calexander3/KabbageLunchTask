@@ -1,0 +1,3 @@
+[submodule "PebbleNet"]
+	path = PebbleNet
+	url = https://github.com/nothingmn/pebble-api-dotnet/
