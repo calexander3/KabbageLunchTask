@@ -56,7 +56,12 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\PebbleNet\src\pebble-api-dotnet\pebble-api-dotnet.csproj">
+      <Project>{34045785-386D-4D51-A6EE-CC679CBF40E0}</Project>
+      <Name>pebble-api-dotnet</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using LunchTask.Models;
 using Newtonsoft.Json;
+using pebble_api_dotnet;
+using pebble_api_dotnet.Layouts;
 
 namespace LunchTask
 {
@@ -28,11 +27,29 @@ namespace LunchTask
                 }
             }
 
+            var timeline = new Timeline("");
             foreach (var lunch in lunches)
             {
-                if (lunch.Date > DateTime.Today)
+                if (lunch.Date >= DateTime.Today)
                 {
                     Console.WriteLine(lunch.Menu);
+                    var result = timeline.sendSharedPin(new List<string> {"KabbageLunch"}, new Pin
+                    {
+                        Id = "KabbageLunch" + lunch.Date.ToString("yyyyMMdd"),
+                        Time = lunch.Date.AddHours(11).AddMinutes(45).ToUniversalTime(),
+                        Duration = new TimeSpan(1, 0, 0),
+                        Layout = new GenericLayout
+                        {
+                            Title = lunch.Menu,
+                            ShortTitle = lunch.Menu.Split(';')[0],
+                            TinyIcon = "system://images/DINNER_RESERVATION"
+                        }
+                    }).Result;
+
+                    if (!result.Success)
+                    {
+                        Console.WriteLine(result.ErrorCode);
+                    }
                 }
             }
 
