@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Text;
 using LunchTask.Models;
 using Newtonsoft.Json;
 using pebble_api_dotnet;
@@ -13,6 +16,8 @@ namespace LunchTask
     {
         static void Main(string[] args)
         {
+            var apiKey = ConfigurationManager.AppSettings["pebbleTimelineKey"];
+
             var lunchRequest = WebRequest.CreateHttp("https://lunch.kabbage.com/api/v2/lunches");
             var lunches = new Lunch[0];
             var response = lunchRequest.GetResponse();
@@ -27,12 +32,24 @@ namespace LunchTask
                 }
             }
 
-            var timeline = new Timeline("");
+            var timeline = new Timeline(apiKey);
             foreach (var lunch in lunches)
             {
-                if (lunch.Date >= DateTime.Today)
+                if (lunch.Date >= DateTime.Today.AddDays(-1))
                 {
                     Console.WriteLine(lunch.Menu);
+
+                    var lunchSections = lunch.Menu.Split(';');
+                    var title = lunchSections.First() + ";";
+                    var body = new StringBuilder();
+                    if (lunchSections.Length > 1)
+                    {
+                        for (var i = 1; i < lunchSections.Length; i++)
+                        {
+                            body.Append(lunchSections[i] + ";");
+                        }
+                    }
+
                     var result = timeline.sendSharedPin(new List<string> {"KabbageLunch"}, new Pin
                     {
                         Id = "KabbageLunch" + lunch.Date.ToString("yyyyMMdd"),
@@ -40,15 +57,15 @@ namespace LunchTask
                         Duration = new TimeSpan(1, 0, 0),
                         Layout = new GenericLayout
                         {
-                            Title = lunch.Menu,
-                            ShortTitle = lunch.Menu.Split(';')[0],
+                            Body = body.ToString(),
+                            Title = title,
                             TinyIcon = "system://images/DINNER_RESERVATION"
                         }
                     }).Result;
 
                     if (!result.Success)
                     {
-                        Console.WriteLine(result.ErrorCode);
+                        Console.WriteLine(result.ErrorDescription);
                     }
                 }
             }
