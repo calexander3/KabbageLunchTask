@@ -40,7 +40,7 @@ namespace LunchTask
                     Console.WriteLine(lunch.Menu);
 
                     var lunchSections = lunch.Menu.Split(';');
-                    var title = lunchSections.First() + ";";
+                    var title = lunchSections.First();
                     var body = new StringBuilder();
                     if (lunchSections.Length > 1)
                     {
@@ -58,7 +58,8 @@ namespace LunchTask
                         Layout = new GenericLayout
                         {
                             Body = body.ToString(),
-                            Title = title,
+                            ShortTitle = title,
+                            Title = title + ";",
                             TinyIcon = "system://images/DINNER_RESERVATION"
                         }
                     }).Result;
