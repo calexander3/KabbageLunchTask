@@ -49,6 +49,10 @@ namespace LunchTask
                             body.Append(lunchSections[i] + ";");
                         }
                     }
+                    else
+                    {
+                        body.Append(title);
+                    }
 
                     var result = timeline.sendSharedPin(new List<string> {"KabbageLunch"}, new Pin
                     {
